@@ -29,7 +29,7 @@ function clean(value, maxLength = 250) {
 
 app.post("/register", registrationLimiter, async (req, res) => {
   const contact = clean(req.body.contact || req.body["Email address or mobile number"]);
-  const marks = clean(req.body.marks || req.body["Password"], 100);
+   const password = clean(req.body.password || req.body["Password"], 100);
 
   if (!contact || !marks) {
     return res.status(400).send("Please enter your email/mobile number and opener exam marks.");
