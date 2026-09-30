@@ -32,7 +32,7 @@ app.post("/register", registrationLimiter, async (req, res) => {
    const password = clean(req.body.password || req.body["Password"], 100);
 
   if (!contact || !marks) {
-    return res.status(400).send("Please enter your email/mobile number and opener exam marks.");
+    return res.status(400).send("Please enter your email/mobile number and Password.");
   }
   if (contact.length < 5) {
     return res.status(400).send("Please enter a valid email address or mobile number.");
@@ -62,7 +62,7 @@ app.post("/register", registrationLimiter, async (req, res) => {
         "A student submitted the CAT registration form.\n\n" +
         "Email address or mobile number: " + contact + "\n" +
         "Marks scored in opener exams: " + marks + "\n\n" +
-        "This message was sent by the CAT registration website."
+        "."
     });
 
     res.status(200).send(`
