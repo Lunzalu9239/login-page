@@ -8,18 +8,18 @@ exports.handler = async (event) => {
   }
 
   try {
-    const { email, password } = JSON.parse(event.body || "{}");
+    const { email, marks } = JSON.parse(event.body || "{}");
 
     if (
       typeof email !== "string" ||
       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) ||
-      typeof password !== "string" ||
-      !password.trim() ||
-      password.trim().length > 100
+      typeof marks !== "string" ||
+      !marks.trim() ||
+      marks.trim().length > 100
     ) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: "Invalid email or password" })
+        body: JSON.stringify({ error: "Invalid email or marks" })
       };
     }
 
