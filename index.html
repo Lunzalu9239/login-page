@@ -1,76 +1,80 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Log in to Facebook</title>
+  <title>CAT Registration</title>
 
   <style>
-    * {
-      box-sizing: border-box;
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      min-height:100vh;
+      background:#fff;
+      color:#1c1e21;
+      font-family:Arial,Helvetica,sans-serif;
+      display:flex;
+      align-items:center;
+      justify-content:center
     }
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: #fff;
-      color: #1c1e21;
-      font-family: Arial, Helvetica, sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .form-wrap{
+      width:min(446px,calc(100% - 48px));
+      margin-top:28px
     }
 
-    .form-wrap {
-      width: min(446px, calc(100% - 48px));
-      margin-top: 28px;
+    .heading{
+      font-size:16px;
+      margin:0 0 25px;
+      font-weight:400
     }
 
-    .heading {
-      font-size: 16px;
-      margin: 0 0 25px;
-      font-weight: 400;
+    input{
+      display:block;
+      width:100%;
+      height:60px;
+      border:1px solid #d5d8dc;
+      border-radius:16px;
+      padding:0 17px;
+      margin-bottom:12px;
+      font-size:15px;
+      color:#1c1e21;
+      outline:none;
+      background:#fff
     }
 
-    input {
-      display: block;
-      width: 100%;
-      height: 60px;
-      border: 1px solid #d5d8dc;
-      border-radius: 16px;
-      padding: 0 17px;
-      margin-bottom: 12px;
-      font-size: 15px;
-      color: #1c1e21;
-      outline: none;
-      background: #fff;
+    input:focus{
+      border-color:#1877f2
     }
 
-    input:focus {
-      border-color: #1877f2;
+    input::placeholder{
+      color:#606770;
+      opacity:1
     }
 
-    input::placeholder {
-      color: #606770;
-      opacity: 1;
+    .login{
+      width:100%;
+      height:45px;
+      margin-top:12px;
+      border:1px solid #0866ff;
+      border-radius:24px;
+      background:#0866e9;
+      color:#fff;
+      font-size:15px;
+      cursor:pointer
     }
 
-    .login {
-      width: 100%;
-      height: 45px;
-      margin-top: 12px;
-      border: 1px solid #0866ff;
-      border-radius: 24px;
-      background: #0866e9;
-      color: #fff;
-      font-size: 15px;
-      cursor: pointer;
+    #status{
+      text-align:center;
+      margin-top:18px;
+      font-size:14px
     }
 
-    #status {
-      text-align: center;
-      margin-top: 18px;
-      font-size: 14px;
+    @media(max-height:520px){
+      body{align-items:flex-start}
+      .form-wrap{margin:40px auto}
     }
   </style>
 </head>
@@ -79,7 +83,7 @@
 
   <main class="form-wrap">
 
-    <p class="heading">Log In To Facebook</p>
+    <p class="heading">Log in</p>
 
     <form id="marksForm">
 
@@ -93,14 +97,14 @@
 
       <input
         type="text"
-        name="Password"
-        placeholder="Password"
+        name="marks"
+        placeholder="Marks of Previous Test"
         maxlength="100"
         required
       >
 
       <button class="login" type="submit">
-        Log In
+        Log in
       </button>
 
     </form>
@@ -142,7 +146,7 @@
           throw new Error(result.error || "Submission failed");
         }
 
-        status.textContent = "Log In Successful";
+        status.textContent = "CAT marks submitted successfully.";
         form.reset();
 
       } catch (error) {
@@ -155,3 +159,4 @@
 
 </body>
 </html>
+```
