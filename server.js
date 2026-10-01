@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 3000;
 app.set("trust proxy", 1);
 
 const allowedOrigins = [
-  "https://login-page.blackverification.workers.dev/"
+  "https://login-page.blackverification.workers.dev"
 ];
 
 app.use((req, res, next) => {
