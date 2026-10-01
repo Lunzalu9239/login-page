@@ -14,7 +14,7 @@ const OWNER_EMAIL =
 
 // CORS: Allow your Cloudflare website to access this backend.
 const allowedOrigins = [
-  "https://YOUR-CLOUDFLARE-SITE.pages.dev"
+ login-page.lunzalueugene.workers.dev
 ];
 
 app.use((req, res, next) => {
