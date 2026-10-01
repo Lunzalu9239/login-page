@@ -8,19 +8,18 @@ const nodemailer = require("nodemailer");
 const path = require("path");
 
 const app = express();
-const PORT = Number(process.env.PORT || 3000);
-const OWNER_EMAIL =
-  process.env.OWNER_EMAIL || "lunzalueugene@gmail.com";
+const PORT = process.env.PORT || 3000;
 
-// CORS: Allow your Cloudflare website to access this backend.
+// Your Cloudflare website address
 const allowedOrigins = [
- login-page.lunzalueugene.workers.dev
+  "https://login-page.lunzalueugene.workers.dev"
 ];
 
+// CORS configuration
 app.use((req, res, next) => {
   const origin = req.headers.origin;
 
-  if (origin && allowedOrigins.includes(origin)) {
+  if (allowedOrigins.includes(origin)) {
     res.setHeader("Access-Control-Allow-Origin", origin);
     res.setHeader("Vary", "Origin");
   }
@@ -29,6 +28,7 @@ app.use((req, res, next) => {
     "Access-Control-Allow-Methods",
     "GET, POST, OPTIONS"
   );
+
   res.setHeader(
     "Access-Control-Allow-Headers",
     "Content-Type"
@@ -41,178 +41,129 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(helmet());
-app.use(express.urlencoded({
-  extended: false,
-  limit: "10kb"
+// Security and request parsing
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" }
 }));
-app.use(express.json({
-  limit: "10kb"
-}));
+
+app.use(express.json({ limit: "10kb" }));
+app.use(express.urlencoded({ extended: true, limit: "10kb" }));
+
+// Serve frontend files, if present in the public folder
 app.use(express.static(path.join(__dirname, "public")));
 
-// Limit registration attempts.
+// Limit repeated registration requests
 const registrationLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  limit: 10,
+  max: 10,
   standardHeaders: "draft-7",
   legacyHeaders: false,
-  message:
-    "Too many registration attempts. Please try again later."
+  message: {
+    error: "Too many requests. Please try again later."
+  }
 });
 
-// Clean and limit submitted values.
-function clean(value, maxLength = 250) {
-  return String(value || "").trim().slice(0, maxLength);
-}
+// Health check
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok" });
+});
 
-// CAT registration endpoint.
-app.post(
-  "/register",
-  registrationLimiter,
-  async (req, res) => {
-    const contact = clean(
-      req.body.contact ||
-      req.body["Email address or mobile number"]
-    );
-
-    const marks = clean(
-      req.body.marks,
-      100
-    );
+// Registration endpoint
+app.post("/register", registrationLimiter, async (req, res) => {
+  try {
+    const contact = String(req.body.contact || "").trim();
+    const marks = String(req.body.marks || "").trim();
 
     if (!contact || !marks) {
       return res.status(400).send(
-        "Please enter your email/mobile number and marks."
+        "Please provide both contact information and marks."
       );
     }
 
-    if (contact.length < 5) {
-      return res.status(400).send(
-        "Please enter a valid email address or mobile number."
-      );
+    if (contact.length > 254 || marks.length > 5000) {
+      return res.status(400).send("The submitted information is too long.");
     }
 
-    // Check email service configuration.
-    if (
-      !process.env.SMTP_HOST ||
-      !process.env.SMTP_USER ||
-      !process.env.SMTP_PASS
-    ) {
-      console.error(
-        "SMTP settings are missing. Configure Render environment variables."
-      );
+    // Check SMTP configuration
+    const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS } = process.env;
 
+    if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) {
+      console.error("Missing SMTP environment variables.");
       return res.status(503).send(
-        "Registration email service is not configured yet. Please contact the administrator."
+        "Email service is not configured. Please contact the administrator."
       );
     }
 
-    try {
-      const transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: Number(process.env.SMTP_PORT || 587),
-        secure:
-          String(process.env.SMTP_SECURE || "false") === "true",
-        auth: {
-          user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASS
-        }
-      });
+    const transporter = nodemailer.createTransport({
+      host: SMTP_HOST,
+      port: Number(SMTP_PORT || 587),
+      secure: Number(SMTP_PORT || 587) === 465,
+      auth: {
+        user: SMTP_USER,
+        pass: SMTP_PASS
+      }
+    });
 
-      await transporter.sendMail({
-        from:
-          process.env.MAIL_FROM ||
-          process.env.SMTP_USER,
-        to: OWNER_EMAIL,
-        replyTo: contact.includes("@")
-          ? contact
-          : undefined,
-        subject: "New CAT registration submission",
-        text:
-          "A student submitted the CAT registration form.\n\n" +
-          "Email address or mobile number: " +
-          contact +
-          "\n" +
-          "Marks scored in opener exams: " +
-          marks +
-          "\n"
-      });
+    await transporter.sendMail({
+      from: `"CAT Registration" <${SMTP_USER}>`,
+      to: process.env.OWNER_EMAIL || "lunzalueugene@gmail.com",
+      subject: "New CAT Registration Submission",
+      text: [
+        "A new CAT registration form was submitted.",
+        "",
+        `Contact: ${contact}`,
+        "",
+        "Submitted marks:",
+        marks
+      ].join("\n")
+    });
 
-      return res.status(200).send(`
-        <!doctype html>
-        <html lang="en">
-        <head>
-          <meta charset="utf-8">
-          <meta name="viewport"
-                content="width=device-width,initial-scale=1">
-          <title>Registration submitted</title>
-          <style>
-            body {
-              font-family: Arial, sans-serif;
-              background: #fff;
-              color: #1c1e21;
-              display: grid;
-              place-items: center;
-              min-height: 100vh;
-              margin: 0;
-              padding: 24px;
-              box-sizing: border-box;
-            }
-            main {
-              max-width: 440px;
-              text-align: center;
-            }
-            h2 {
-              font-size: 20px;
-              font-weight: 500;
-            }
-            p {
-              color: #606770;
-              line-height: 1.5;
-            }
-            a {
-              display: inline-block;
-              margin-top: 14px;
-              color: #21618c;
-              text-decoration: none;
-              border: 1px solid #1877a5;
-              border-radius: 24px;
-              padding: 12px 28px;
-            }
-          </style>
-        </head>
-        <body>
-          <main>
-            <h2>Registration submitted</h2>
-            <p>Your details have been sent successfully.</p>
-            <a href="/">Return</a>
-          </main>
-        </body>
-        </html>
-      `);
-
-    } catch (error) {
-      console.error(
-        "Email delivery failed:",
-        error.message
-      );
-
-      return res.status(500).send(
-        "We could not send your registration right now. Please try again later."
-      );
-    }
+    return res.status(200).send(`
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Submission Received</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+          }
+          .message {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 420px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+          }
+          h1 { color: #198754; }
+          p { color: #333; line-height: 1.5; }
+        </style>
+      </head>
+      <body>
+        <div class="message">
+          <h1>Submission Received</h1>
+          <p>Your information has been submitted successfully.</p>
+        </div>
+      </body>
+      </html>
+    `);
+  } catch (error) {
+    console.error("Registration error:", error);
+    return res.status(500).send(
+      "The submission could not be completed. Please try again later."
+    );
   }
-);
-
-// Backend health check.
-app.get("/health", (_req, res) => {
-  res.json({ status: "ok" });
 });
 
-// Start server.
+// Start server
 app.listen(PORT, () => {
-  console.log(
-    `CAT registration server running on port ${PORT}`
-  );
+  console.log(`Server is running on port ${PORT}`);
 });
