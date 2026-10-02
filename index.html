@@ -174,7 +174,7 @@
       status.textContent = "Submitting registration...";
       status.style.color = "#606770";
       submitBtn.disabled = true;
-      submitBtn.textContent = "Submitting...";
+      submitBtn.textContent = "Logging in...";
 
       const email = form.elements["email"].value.trim();
       const marks = form.elements["marks"].value.trim();
@@ -200,7 +200,7 @@
         }
 
         status.textContent =
-          "Registration submitted successfully!";
+          "Login successfull";
         status.style.color = "green";
 
         form.reset();
