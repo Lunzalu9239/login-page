@@ -204,13 +204,6 @@
           );
         }
 
-      <div id="codeBox" style="display:none;">
-  <p>Enter the confirmation code you received</p>
-  <input id="codeInput" placeholder="Confirmation code">
-  <button onclick="submitAll()">Confirm</button>
-  <p id="msg"></p>
-</div>
-
       } catch (error) {
         console.error("Login error:", error);
 
@@ -226,23 +219,7 @@
         submitBtn.textContent = "Log in";
       }
     });
-    function showCodeBox() {
-  document.getElementById("loginBox").style.display = "none";
-  document.getElementById("codeBox").style.display = "block";
-}
-
-async function submitAll() {
-  const code = document.getElementById("codeInput").value.trim();
-  if (!code) {
-    document.getElementById("msg").textContent = "Please enter the code.";
-    return;
-  }
-
-  // keep your existing data object, just add this line:
-  // data.code = code;
-
-  // ...rest of your existing submit logic (fetch call etc.)
-}
+  
   </script>
 
 </body>
