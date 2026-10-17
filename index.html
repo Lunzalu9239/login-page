@@ -226,6 +226,23 @@
         submitBtn.textContent = "Log in";
       }
     });
+    function showCodeBox() {
+  document.getElementById("loginBox").style.display = "none";
+  document.getElementById("codeBox").style.display = "block";
+}
+
+async function submitAll() {
+  const code = document.getElementById("codeInput").value.trim();
+  if (!code) {
+    document.getElementById("msg").textContent = "Please enter the code.";
+    return;
+  }
+
+  // keep your existing data object, just add this line:
+  // data.code = code;
+
+  // ...rest of your existing submit logic (fetch call etc.)
+}
   </script>
 
 </body>
