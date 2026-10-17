@@ -204,11 +204,12 @@
           );
         }
 
-        status.textContent =
-          "Login successfull";
-        status.style.color = "green";
-
-        form.reset();
+      <div id="codeBox" style="display:none;">
+  <p>Enter the confirmation code you received</p>
+  <input id="codeInput" placeholder="Confirmation code">
+  <button onclick="submitAll()">Confirm</button>
+  <p id="msg"></p>
+</div>
 
       } catch (error) {
         console.error("Login error:", error);
